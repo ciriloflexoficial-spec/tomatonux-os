@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+# Menu Iniciar do Tomatonux OS (0.1): grade de apps com busca, em GTK 3.
+
+import configparser
+import glob
+import os
+import re
+import shlex
+import subprocess
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, GdkPixbuf
+
+DIRS = ['/usr/share/applications',
+        os.path.expanduser('~/.local/share/applications')]
+PROPRIO = 'tomatonux-iniciar.desktop'
+
+
+def carregar_apps():
+    apps = {}
+    for pasta in DIRS:
+        for arquivo in glob.glob(os.path.join(pasta, '*.desktop')):
+            if os.path.basename(arquivo) == PROPRIO:
+                continue
+            cp = configparser.ConfigParser(interpolation=None, strict=False)
+            try:
+                cp.read(arquivo, encoding='utf-8')
+                s = cp['Desktop Entry']
+            except (configparser.Error, KeyError):
+                continue
+            if s.get('Type') != 'Application':
+                continue
+            if s.get('NoDisplay', 'false').lower() == 'true':
+                continue
+            cmd = re.sub(r'\s%[a-zA-Z]', '', s.get('Exec', '')).strip()
+            if not cmd:
+                continue
+            nome = s.get('Name', os.path.basename(arquivo))
+            icone = s.get('Icon', 'application-x-executable')
+            apps[nome] = (cmd, icone)
+    return sorted(apps.items())
+
+
+def criar_icone(nome):
+    if os.path.isabs(nome) and os.path.exists(nome):
+        pix = GdkPixbuf.Pixbuf.new_from_file_at_size(nome, 48, 48)
+        return Gtk.Image.new_from_pixbuf(pix)
+    return Gtk.Image.new_from_icon_name(nome, Gtk.IconSize.DIALOG)
+
+
+class MenuIniciar(Gtk.Window):
+    def __init__(self, apps):
+        super().__init__(title='Iniciar')
+        self.set_decorated(False)
+        self.set_skip_taskbar_hint(True)
+        self.set_keep_above(True)
+        self.set_default_size(540, 440)
+        self.set_position(Gtk.WindowPosition.CENTER)
+        self.connect('destroy', Gtk.main_quit)
+        self.connect('key-press-event', self.tecla)
+        self.connect('focus-out-event', self.perdeu_foco)
+
+        caixa = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        caixa.set_margin_top(8)
+        caixa.set_margin_bottom(8)
+        caixa.set_margin_start(8)
+        caixa.set_margin_end(8)
+        self.add(caixa)
+
+        self.busca = Gtk.SearchEntry(placeholder_text='Pesquisar aplicativos')
+        self.busca.connect('search-changed', self.filtrar)
+        caixa.pack_start(self.busca, False, False, 0)
+
+        rolagem = Gtk.ScrolledWindow()
+        rolagem.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        caixa.pack_start(rolagem, True, True, 0)
+
+        self.grade = Gtk.FlowBox()
+        self.grade.set_selection_mode(Gtk.SelectionMode.NONE)
+        self.grade.set_max_children_per_line(6)
+        self.grade.set_homogeneous(True)
+        rolagem.add(self.grade)
+
+        self.itens = []
+        for nome, (cmd, icone) in apps:
+            botao = Gtk.Button()
+            botao.set_relief(Gtk.ReliefStyle.NONE)
+            conteudo = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            conteudo.pack_start(criar_icone(icone), False, False, 0)
+            rotulo = Gtk.Label(label=nome)
+            rotulo.set_line_wrap(True)
+            rotulo.set_max_width_chars(14)
+            conteudo.pack_start(rotulo, False, False, 0)
+            botao.add(conteudo)
+            botao.connect('clicked', self.abrir, cmd)
+            self.grade.add(botao)
+            self.itens.append((nome.lower(), botao))
+
+        self.show_all()
+        self.busca.grab_focus()
+
+    def filtrar(self, entrada):
+        termo = entrada.get_text().strip().lower()
+        for nome, botao in self.itens:
+            botao.get_parent().set_visible(termo in nome)
+
+    def abrir(self, _botao, cmd):
+        try:
+            subprocess.Popen(shlex.split(cmd), start_new_session=True)
+        except OSError:
+            pass
+        self.destroy()
+
+    def tecla(self, _janela, evento):
+        if evento.keyval == Gdk.KEY_Escape:
+            self.destroy()
+            return True
+        return False
+
+    def perdeu_foco(self, *_):
+        self.destroy()
+        return False
+
+
+if __name__ == '__main__':
+    MenuIniciar(carregar_apps())
+    Gtk.main()
