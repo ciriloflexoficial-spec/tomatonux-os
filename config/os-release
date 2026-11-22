@@ -1,0 +1,7 @@
+NAME="Tomatonux OS"
+PRETTY_NAME="Tomatonux OS 0.0.1"
+ID=tomatonux
+ID_LIKE=debian
+VERSION="0.0.1"
+VERSION_ID="0.0.1"
+VERSION_CODENAME=alpha
