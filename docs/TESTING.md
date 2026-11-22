@@ -32,3 +32,24 @@
 ### Próximo passo
 - Corrigir a inicialização da sessão gráfica (variável `DISPLAY`, autostart do Openbox, papel de parede e Tint2) antes de um novo teste.
 - Reduzir a dependência de digitação manual nos testes.
+
+## Teste na VM: desktop da versão 0.0.1 (22/11/2026)
+
+### Validado
+- ISO gerada pela execução #26 (commit b31388a), com build de 2026-11-22 19:54 UTC.
+- GRUB, kernel 6.12.117-1 e systemd iniciaram sem erro fatal.
+- Login automático com o usuário `user`.
+- Desktop Openbox com papel de parede Tomatonux (Tux com tomate).
+- Barra do Tint2 com áreas de trabalho e relógio.
+- Applet de rede do NetworkManager visível no painel.
+- Menu rofi (botão direito) lista os aplicativos instalados.
+- Aplicativos abertos com sucesso: Xfce Terminal, Tint2 Settings, PCMan File Manager e Htop.
+- Uso de memória baixo (cerca de 199 MiB em 27 minutos de execução).
+
+### Pendente ou observado
+- Clique depende do cliente VNC; toque direto não aciona a ação, é preciso usar Enter ou o botão de mouse da barra.
+- `live-config.service` pode demorar vários minutos no primeiro boot.
+- Swap desativado (0K/0K); avaliar para o PC da Xuxa com 4 GB.
+- Openbox Configuration Manager e comportamento completo do botão direito ainda não testados.
+- Teste de boot automático no workflow (`test-boot`) só confirma que a VM ficou ligada por 90 segundos, não que a área de trabalho apareceu.
+- Relógio mostra horário da VM; fuso horário ainda não configurado.
