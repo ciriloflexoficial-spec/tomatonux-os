@@ -93,3 +93,67 @@ jobs:
           name: tomatonux-iso
           path: build/live-build/*.iso
           if-no-files-found: error
+
+  test-boot:
+    needs: build-iso
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Download ISO artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tomatonux-iso
+          path: iso
+
+      - name: Install QEMU
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86
+
+      - name: Start Tomatonux virtual machine
+        run: |
+          ISO=$(find iso -name '*.iso' -print -quit)
+          test -n "$ISO"
+
+          echo "Testing ISO: $ISO"
+          qemu-system-x86_64 --version
+
+          touch serial.log
+
+          set +e
+          timeout 90s qemu-system-x86_64 \
+            -machine pc,accel=tcg \
+            -m 2048 \
+            -smp 2 \
+            -cdrom "$ISO" \
+            -boot order=d \
+            -display none \
+            -serial file:serial.log \
+            -monitor none \
+            -no-reboot \
+            -no-shutdown \
+            -d guest_errors \
+            -D qemu-debug.log
+
+          STATUS=$?
+          set -e
+
+          if [ "$STATUS" -eq 124 ]; then
+            echo "QEMU permaneceu ativo durante 90 segundos."
+          elif [ "$STATUS" -eq 0 ]; then
+            echo "QEMU encerrou normalmente."
+          else
+            echo "Falha ao executar QEMU. Código: $STATUS"
+            exit 1
+          fi
+
+      - name: Upload boot test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tomatonux-boot-test
+          path: |
+            serial.log
+            qemu-debug.log
+          if-no-files-found: warn
