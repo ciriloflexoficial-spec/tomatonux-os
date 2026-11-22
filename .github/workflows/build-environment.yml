@@ -40,6 +40,6 @@ jobs:
         working-directory: build/live-build
         run: |
           sh -n auto/config
-          sudo lb config
+          lb config
           echo "Live Build configuration completed!"
           ls -la
