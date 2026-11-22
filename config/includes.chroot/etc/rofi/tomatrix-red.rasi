@@ -1,0 +1,45 @@
+* {
+    bg: #171717;
+    bg-alt: #252525;
+    fg: #ffffff;
+    red: #8f101c;
+}
+
+window {
+    width: 40%;
+    border: 2px;
+    border-color: @red;
+    border-radius: 12px;
+    background-color: @bg;
+}
+
+mainbox {
+    background-color: @bg;
+    spacing: 8px;
+    padding: 16px;
+}
+
+inputbar {
+    background-color: @bg-alt;
+    text-color: @fg;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+listview {
+    lines: 8;
+    columns: 1;
+    fixed-height: true;
+}
+
+element {
+    padding: 8px;
+    background-color: @bg;
+    text-color: @fg;
+}
+
+element selected {
+    background-color: @red;
+    text-color: #ffffff;
+    border-radius: 6px;
+}

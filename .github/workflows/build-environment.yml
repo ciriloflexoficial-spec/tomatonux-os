@@ -78,6 +78,12 @@ jobs:
         run: |
           lb build 2>&1 | tee build.log
 
+      - name: Verify ISO contents
+        working-directory: .
+        run: |
+          sh -n scripts/verify-iso.sh
+          sh scripts/verify-iso.sh build/live-build
+
       - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v4

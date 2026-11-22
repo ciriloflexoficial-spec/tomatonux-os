@@ -15,3 +15,15 @@ htop
 bash-completion
 user-setup
 live-tools
+
+# Desktop environment
+lightdm
+lightdm-gtk-greeter
+tint2
+rofi
+pcmanfm
+xfce4-terminal
+feh
+obconf
+lxappearance
+fonts-dejavu-core

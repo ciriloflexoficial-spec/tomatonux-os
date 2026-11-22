@@ -1,0 +1,10 @@
+configuration {
+    modi: "drun";
+    show-icons: true;
+    display-drun: "Aplicativos";
+    drun-display-format: "{name}";
+    disable-history: false;
+    sorting-method: "fzf";
+}
+
+@theme "/etc/rofi/tomatrix-red.rasi"

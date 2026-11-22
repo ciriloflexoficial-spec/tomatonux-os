@@ -1,0 +1,52 @@
+# Tomatonux OS - Tomatrix Red
+
+# Panel
+panel_items = TSC
+panel_monitor = all
+panel_position = bottom center horizontal
+panel_size = 100% 38
+panel_margin = 0 0
+panel_padding = 8 4 8
+panel_background_id = 1
+panel_dock = 0
+panel_layer = bottom
+panel_strut_policy = follow_size
+
+# Taskbar
+taskbar_mode = single_desktop
+taskbar_padding = 4 2 4
+taskbar_background_id = 0
+taskbar_active_background_id = 2
+taskbar_name = 0
+
+# System tray
+systray_padding = 6 4 6
+systray_background_id = 0
+
+# Clock
+time1_format = %H:%M
+time1_font = DejaVu Sans 10
+time1_font_color = #ffffff
+clock_padding = 8 0
+clock_background_id = 0
+
+# Background 0: default
+rounded = 4
+border_width = 0
+background_color = #171717 85
+border_color = #171717 0
+id = 0
+
+# Background 1: panel
+rounded = 6
+border_width = 0
+background_color = #171717 95
+border_color = #8f101c 100
+id = 1
+
+# Background 2: active task
+rounded = 4
+border_width = 0
+background_color = #8f101c 100
+border_color = #8f101c 100
+id = 2

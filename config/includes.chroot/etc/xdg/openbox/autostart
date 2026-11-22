@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Tomatonux OS desktop startup
+
+tint2 &
+nm-applet &
