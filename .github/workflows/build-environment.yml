@@ -26,6 +26,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y live-build debootstrap xorriso squashfs-tools
 
+      - name: Check Live Build version
+        run: |
+          lb --version
+          dpkg-query -W live-build
+          lb config --help | grep -E 'bootloaders|image-name' || true
+
       - name: Validate Live Build configuration
         working-directory: build/live-build
         run: |
