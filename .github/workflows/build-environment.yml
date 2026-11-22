@@ -43,3 +43,53 @@ jobs:
           lb config
           echo "Live Build configuration completed!"
           ls -la
+
+  build-iso:
+    needs: prepare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    container:
+      image: debian:trixie
+      options: --privileged
+
+    steps:
+      - name: Download project
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            live-build \
+            debootstrap \
+            xorriso \
+            squashfs-tools \
+            ca-certificates
+
+      - name: Configure Live Build
+        working-directory: build/live-build
+        run: |
+          sh -n auto/config
+          lb config
+
+      - name: Build ISO
+        id: build
+        working-directory: build/live-build
+        run: |
+          lb build 2>&1 | tee build.log
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-build-log
+          path: build/live-build/build.log
+          if-no-files-found: warn
+
+      - name: Upload ISO
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tomatonux-iso
+          path: build/live-build/*.iso
+          if-no-files-found: error
