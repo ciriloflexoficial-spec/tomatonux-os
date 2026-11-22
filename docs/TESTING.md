@@ -53,3 +53,13 @@
 - Openbox Configuration Manager e comportamento completo do botão direito ainda não testados.
 - Teste de boot automático no workflow (`test-boot`) só confirma que a VM ficou ligada por 90 segundos, não que a área de trabalho apareceu.
 - Relógio mostra horário da VM; fuso horário ainda não configurado.
+
+## Barra centralizada validada (ISO da execução #30, commit fc66662)
+
+- Barra centralizada na parte inferior, em vermelho, com cantos quase retos.
+- Botão Iniciar (tomate) abre o rofi com um clique (não precisa de Enter).
+- Apps abertos aparecem no meio da barra, com ícone e nome.
+- Ao fechar um app, o item some da barra.
+- Relógio e rede visíveis à direita (22:17, 22/11 no horário da VM).
+
+Pendente: menu Iniciar próprio em GTK (substituir o rofi), janela de configurações e lentidão do rofi ao abrir.
