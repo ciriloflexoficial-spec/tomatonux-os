@@ -2,15 +2,14 @@ name: Tomatonux Build Environment
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   prepare:
     runs-on: ubuntu-24.04
+    container:
+      image: debian:trixie
 
     steps:
       - name: Download project
@@ -19,12 +18,17 @@ jobs:
       - name: Check architecture
         run: |
           uname -m
-          lscpu | grep -E 'Architecture|CPU\(s\)'
+          dpkg --print-architecture
 
       - name: Install build tools
         run: |
-          sudo apt-get update
-          sudo apt-get install -y live-build debootstrap xorriso squashfs-tools
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            live-build \
+            debootstrap \
+            xorriso \
+            squashfs-tools \
+            ca-certificates
 
       - name: Check Live Build version
         run: |
