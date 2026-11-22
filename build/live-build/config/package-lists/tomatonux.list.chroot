@@ -1,0 +1,17 @@
+live-boot
+live-config
+live-config-systemd
+systemd-sysv
+xorg
+xserver-xorg
+openbox
+network-manager
+network-manager-gnome
+dbus-x11
+sudo
+nano
+less
+htop
+bash-completion
+user-setup
+live-tools
