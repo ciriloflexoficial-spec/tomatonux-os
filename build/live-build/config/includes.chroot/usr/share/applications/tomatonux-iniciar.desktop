@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Iniciar
+Comment=Menu de aplicativos do Tomatonux OS
+Exec=rofi -show drun
+Icon=/usr/share/icons/hicolor/scalable/apps/tomatonux.svg
+Terminal=false
+NoDisplay=true
