@@ -5,4 +5,5 @@ Comment=Menu de aplicativos do Tomatonux OS
 Exec=/usr/local/bin/tomatonux-iniciar
 Icon=/usr/share/icons/hicolor/scalable/apps/tomatonux.svg
 Terminal=false
+StartupNotify=false
 NoDisplay=true

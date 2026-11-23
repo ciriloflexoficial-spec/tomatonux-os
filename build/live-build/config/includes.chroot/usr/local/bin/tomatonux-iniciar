@@ -15,6 +15,7 @@ from gi.repository import Gtk, Gdk, GdkPixbuf
 DIRS = ['/usr/share/applications',
         os.path.expanduser('~/.local/share/applications')]
 PROPRIO = 'tomatonux-iniciar.desktop'
+LOG = os.path.expanduser('~/.local/state/tomatonux/menu.log')
 
 
 def carregar_apps():
@@ -108,8 +109,10 @@ class MenuIniciar(Gtk.Window):
     def abrir(self, _botao, cmd):
         try:
             subprocess.Popen(shlex.split(cmd), start_new_session=True)
-        except OSError:
-            pass
+        except OSError as erro:
+            os.makedirs(os.path.dirname(LOG), exist_ok=True)
+            with open(LOG, 'a') as f:
+                f.write(f'erro ao abrir {cmd}: {erro}\n')
         self.destroy()
 
     def tecla(self, _janela, evento):

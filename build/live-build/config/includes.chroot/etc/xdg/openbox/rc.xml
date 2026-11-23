@@ -2,27 +2,22 @@
 <openbox_config xmlns="http://openbox.org/3.4/rc">
 
   <keyboard>
-    <keybind key="Super_L">
+    <keybind key="W-r">
       <action name="Execute">
         <command>/usr/local/bin/tomatonux-iniciar</command>
       </action>
     </keybind>
-    <keybind key="Super_R">
-      <action name="Execute">
-        <command>/usr/local/bin/tomatonux-iniciar</command>
-      </action>
-    </keybind>
-    <keybind key="Super_E">
+    <keybind key="W-e">
       <action name="Execute">
         <command>pcmanfm</command>
       </action>
     </keybind>
-    <keybind key="Super_T">
+    <keybind key="W-t">
       <action name="Execute">
         <command>xfce4-terminal</command>
       </action>
     </keybind>
-    <keybind key="Super_F">
+    <keybind key="W-f">
       <action name="Execute">
         <command>firefox-esr</command>
       </action>

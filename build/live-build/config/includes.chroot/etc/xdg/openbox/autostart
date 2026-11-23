@@ -1,9 +1,10 @@
 #!/bin/sh
 
-# Tomatonux OS desktop startup
+# Tomatonux OS desktop startup (0.1)
 
-feh --bg-fill /usr/share/backgrounds/tomatonux.png &
-tomatonux-atalhos
+tomatonux-atalhos &
 pcmanfm --desktop &
+sleep 2
+feh --bg-fill /usr/share/backgrounds/tomatonux.png &
 tint2 &
 nm-applet &
