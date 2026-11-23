@@ -96,13 +96,15 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: tomatonux-iso
+          name: tomatonux-iso-run${{ github.run_number }}
           path: build/live-build/*.iso
           if-no-files-found: error
 
   test-boot:
     needs: build-iso
     runs-on: ubuntu-24.04
+    container:
+      image: debian:trixie
     timeout-minutes: 5
 
     steps:
