@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Configurações
+Comment=Configurações do Tomatonux OS
+Exec=/usr/local/bin/tomatonux-configuracoes
+Icon=/usr/share/icons/hicolor/scalable/apps/tomatonux.svg
+Terminal=false
+Categories=Settings;

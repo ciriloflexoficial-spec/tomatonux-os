@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+# Configurações do Tomatonux OS (0.1): Aparência e Organizador da área de trabalho.
+
+import os
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
+
+CONF_DIR = os.path.expanduser('~/.config/tomatonux')
+CONF = os.path.join(CONF_DIR, 'organizador.conf')
+PADROES = {'ativo': '1', 'perguntar': '1'}
+
+
+def ler():
+    dados = dict(PADROES)
+    if os.path.exists(CONF):
+        with open(CONF) as f:
+            for linha in f:
+                if '=' in linha:
+                    chave, valor = linha.strip().split('=', 1)
+                    dados[chave] = valor
+    return dados
+
+
+def salvar(dados):
+    os.makedirs(CONF_DIR, exist_ok=True)
+    with open(CONF, 'w') as f:
+        for chave in ('ativo', 'perguntar'):
+            f.write(f'{chave}={dados[chave]}\n')
+
+
+def titulo(texto):
+    rotulo = Gtk.Label(label=texto, xalign=0)
+    rotulo.set_markup(f'<b><big>{texto}</big></b>')
+    return rotulo
+
+
+def linha_chave(texto, dica, ativo):
+    caixa = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+    textos = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+    nome = Gtk.Label(label=texto, xalign=0)
+    detalhe = Gtk.Label(label=dica, xalign=0)
+    detalhe.get_style_context().add_class('dim-label')
+    textos.pack_start(nome, False, False, 0)
+    textos.pack_start(detalhe, False, False, 0)
+    caixa.pack_start(textos, True, True, 0)
+    chave = Gtk.Switch()
+    chave.set_active(ativo)
+    chave.set_valign(Gtk.Align.CENTER)
+    caixa.pack_end(chave, False, False, 0)
+    return caixa, chave
+
+
+class Configuracoes(Gtk.Window):
+    def __init__(self):
+        super().__init__(title='Configurações do Tomatonux')
+        self.set_default_size(640, 420)
+        self.connect('destroy', Gtk.main_quit)
+        self.dados = ler()
+
+        principal = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=0)
+        self.add(principal)
+
+        self.pilha = Gtk.Stack()
+        self.pilha.set_transition_type(Gtk.StackTransitionType.NONE)
+        self.pilha.add_titled(self.pagina_aparencia(), 'aparencia', 'Aparência')
+        self.pilha.add_titled(self.pagina_organizador(), 'organizador', 'Organizador')
+
+        lateral = Gtk.StackSidebar()
+        lateral.set_stack(self.pilha)
+        lateral.set_size_request(170, -1)
+
+        principal.pack_start(lateral, False, False, 0)
+        principal.pack_start(self.pilha, True, True, 0)
+
+    def pagina_aparencia(self):
+        caixa = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        caixa.set_margin_top(16)
+        caixa.set_margin_bottom(16)
+        caixa.set_margin_start(16)
+        caixa.set_margin_end(16)
+        caixa.pack_start(titulo('Aparência'), False, False, 0)
+        for texto in ('Tema: Tomatonux-Vermelho',
+                      'Fonte: Sans 10',
+                      'Estilo de janela: quase reto',
+                      '(fixo nesta versão; personalização fica para as próximas)'):
+            rotulo = Gtk.Label(label=texto, xalign=0)
+            caixa.pack_start(rotulo, False, False, 0)
+        return caixa
+
+    def pagina_organizador(self):
+        caixa = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=14)
+        caixa.set_margin_top(16)
+        caixa.set_margin_bottom(16)
+        caixa.set_margin_start(16)
+        caixa.set_margin_end(16)
+        caixa.pack_start(titulo('Organizador da área de trabalho'), False, False, 0)
+
+        linha, self.chave_ativo = linha_chave(
+            'Organizador da área de trabalho',
+            'Organiza ícones, papel de parede e inicialização ao entrar.',
+            self.dados['ativo'] == '1')
+        caixa.pack_start(linha, False, False, 0)
+
+        linha, self.chave_perguntar = linha_chave(
+            'Perguntar antes de organizar',
+            'Pede confirmação antes de cada ação. Limpeza de miniaturas sempre pergunta.',
+            self.dados['perguntar'] == '1')
+        caixa.pack_start(linha, False, False, 0)
+
+        self.chave_perguntar.set_sensitive(self.dados['ativo'] == '1')
+        self.chave_ativo.connect('state-set', self.mudou_ativo)
+        self.chave_perguntar.connect('state-set', self.mudou_perguntar)
+        return caixa
+
+    def mudou_ativo(self, _chave, estado):
+        self.dados['ativo'] = '1' if estado else '0'
+        self.chave_perguntar.set_sensitive(estado)
+        salvar(self.dados)
+        return False
+
+    def mudou_perguntar(self, _chave, estado):
+        self.dados['perguntar'] = '1' if estado else '0'
+        salvar(self.dados)
+        return False
+
+
+if __name__ == '__main__':
+    janela = Configuracoes()
+    janela.show_all()
+    Gtk.main()
