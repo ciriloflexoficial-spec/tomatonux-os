@@ -111,7 +111,7 @@ jobs:
       - name: Download ISO artifact
         uses: actions/download-artifact@v4
         with:
-          name: tomatonux-iso
+          name: tomatonux-iso-run${{ github.run_number }}
           path: iso
 
       - name: Install QEMU
