@@ -20,3 +20,11 @@ Todas as versões antes da 1.0 são Alpha ou Beta e não são recomendadas para 
 
 ## Regra de versão
 Só se muda o número quando o critério de saída da versão atual estiver cumprido e registrado.
+
+## Contas de usuário (0.5 Beta)
+- Tela de login com seleção de conta (lista de usuários do sistema).
+- Cada conta tem pasta pessoal e configuração própria (`~/.config`), incluindo desktop, atalhos e Organizador.
+- Botões no rodapé do menu Iniciar: Trocar usuário (volta à tela de login sem encerrar a sessão, via `dm-tool switch-to-greeter`), Bloquear, Suspender, Reiniciar e Desligar.
+- Criação e remoção de contas feitas por ferramenta própria, com confirmação antes de apagar dados.
+- Critério de saída: duas contas criadas na VM, cada uma com configuração própria, e troca de usuário funcionando sem reiniciar.
+- Alt+F4 fecha só a janela ativa (comportamento do Openbox); não é usado para desligar.
