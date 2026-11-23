@@ -3,5 +3,7 @@
 # Tomatonux OS desktop startup
 
 feh --bg-fill /usr/share/backgrounds/tomatonux.png &
+tomatonux-atalhos
+pcmanfm --desktop &
 tint2 &
 nm-applet &

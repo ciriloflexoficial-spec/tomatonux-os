@@ -1,0 +1,52 @@
+#!/bin/sh
+# Cria os atalhos da área de trabalho do Tomatonux OS (0.1).
+# Copia apps visíveis do menu, pastas do usuário e a Lixeira.
+# Só cria o que ainda não foi criado antes; ícones apagados pelo usuário não voltam.
+
+DESK="$HOME/Desktop"
+STATE="$HOME/.local/state/tomatonux"
+REG="$STATE/atalhos.txt"
+
+mkdir -p "$DESK" "$STATE"
+touch "$REG"
+
+# 1. Apps visíveis do menu
+for pasta in /usr/share/applications "$HOME/.local/share/applications"; do
+    [ -d "$pasta" ] || continue
+    for arq in "$pasta"/*.desktop; do
+        [ -f "$arq" ] || continue
+        nome=$(basename "$arq")
+        [ "$nome" = "tomatonux-iniciar.desktop" ] && continue
+        grep -qx "$nome" "$REG" && continue
+        grep -q '^Type=Application' "$arq" || continue
+        grep -q '^NoDisplay=true' "$arq" && continue
+        grep -q '^Hidden=true' "$arq" && continue
+        [ -e "$DESK/$nome" ] && continue
+        cp "$arq" "$DESK/$nome"
+        chmod +x "$DESK/$nome"
+        echo "$nome" >> "$REG"
+    done
+done
+
+# 2. Pastas do usuário e Lixeira (atalhos do tipo link)
+criar_link() {
+    nome="$1"; url="$2"; icone="$3"
+    arq="$nome.desktop"
+    grep -qx "$arq" "$REG" && return
+    [ -e "$DESK/$arq" ] && return
+    cat <<LINK > "$DESK/$arq"
+[Desktop Entry]
+Type=Link
+Name=$nome
+URL=$url
+Icon=$icone
+LINK
+    echo "$arq" >> "$REG"
+}
+
+for pasta in Documents Downloads Pictures Music Videos Templates Public; do
+    mkdir -p "$HOME/$pasta"
+    criar_link "$pasta" "file://$HOME/$pasta" folder
+done
+criar_link "Pasta pessoal" "file://$HOME" user-home
+criar_link "Lixeira" "trash:///" user-trash
